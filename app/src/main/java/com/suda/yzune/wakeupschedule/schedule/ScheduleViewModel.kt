@@ -44,7 +44,11 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     val tableSelectList = arrayListOf<TableSelectBean>()
     val allCourseList = Array(7) { MutableLiveData<List<CourseBean>>() }
     val daysArray = arrayOf("日", "一", "二", "三", "四", "五", "六", "日")
+    val getHtmlApiUrl = "https://dev.shellbox.airmole.cn/api/edu/course/html"
     var currentWeek = 1
+
+    var sid = ""
+    var password = ""
 
     fun initTableSelectList(): LiveData<List<TableSelectBean>> {
         return tableDao.getTableSelectListLiveData()

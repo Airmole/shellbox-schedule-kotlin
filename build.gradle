@@ -29,7 +29,7 @@ allprojects {
             url "https://jitpack.io"
         }
         maven {
-            url "http://dl.bintray.com/lukaville/maven"
+            url "https://repo.cuba-platform.com/"
         }
         maven {
             url "https://maven.google.com/"

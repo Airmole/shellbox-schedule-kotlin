@@ -61,17 +61,7 @@ class ScheduleSettingsActivity : BaseListActivity(), ColorPickerFragment.ColorPi
         val iconFont = ResourcesCompat.getFont(this, R.font.iconfont)
         tvButton.typeface = iconFont
         tvButton.textSize = 20f
-        tvButton.text = getString(R.string.icon_heart)
-        if (BuildConfig.CHANNEL == "google" || BuildConfig.CHANNEL == "huawei") {
-            tvButton.setOnClickListener {
-                val dialog = DonateFragment.newInstance()
-                dialog.show(supportFragmentManager, "donateDialog")
-            }
-        } else {
-            tvButton.setOnClickListener {
-                start<DonateActivity>()
-            }
-        }
+        tvButton.text = ""
         return tvButton
     }
 
@@ -87,7 +77,7 @@ class ScheduleSettingsActivity : BaseListActivity(), ColorPickerFragment.ColorPi
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        showSearch = true
+        showSearch = false
         textWatcher = object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {}
 
@@ -196,13 +186,6 @@ class ScheduleSettingsActivity : BaseListActivity(), ColorPickerFragment.ColorPi
         items.add(VerticalItem("小部件标题颜色", "指标题等字体的颜色\n对于日视图则是全部文字的颜色\n还可以调颜色的透明度哦 (●ﾟωﾟ●)", keys = listOf("颜色", "显示", "文字", "文字颜色", "小部件", "小", "插件", "桌面")))
         items.add(VerticalItem("小部件课程颜色", "指课程格子内的文字颜色\n还可以调颜色的透明度哦 (●ﾟωﾟ●)", keys = listOf("颜色", "显示", "文字", "文字颜色", "小部件", "小", "插件", "桌面")))
         items.add(VerticalItem("小部件格子边框颜色", "将不透明度调到最低就可以隐藏边框了哦~", keys = listOf("边框", "显示", "边框颜色", "格子", "边", "小部件", "小", "插件", "桌面")))
-
-        items.add(CategoryItem("高级", false))
-        when (BuildConfig.CHANNEL) {
-            "google" -> items.add(VerticalItem("看看都有哪些高级功能", "如果想支持一下社团和开发者\n请去支付宝18862196504\n高级功能会持续更新~\n采用诚信授权模式ヾ(=･ω･=)o", keys = listOf("高级")))
-            "huawei" -> items.add(VerticalItem("看看都有哪些高级功能", "高级功能会持续更新~", keys = listOf("高级")))
-            else -> items.add(VerticalItem("解锁高级功能", "解锁赞助一下社团和开发者ヾ(=･ω･=)o\n高级功能会持续更新~\n采用诚信授权模式", keys = listOf("高级")))
-        }
 
         items.add(VerticalItem("", "\n\n\n"))
     }

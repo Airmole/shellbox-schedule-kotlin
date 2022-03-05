@@ -53,6 +53,10 @@ class ImportViewModel(application: Application) : AndroidViewModel(application) 
 
     var schoolInfo = Array(3) { "" }
 
+    val apiUrl = "https://dev.shellbox.airmole.cn/api/edu/course/html"
+    var uid: String? = null
+    var pwd: String? = null
+
     private val baseList = arrayListOf<CourseBaseBean>()
     private val detailList = arrayListOf<CourseDetailBean>()
 

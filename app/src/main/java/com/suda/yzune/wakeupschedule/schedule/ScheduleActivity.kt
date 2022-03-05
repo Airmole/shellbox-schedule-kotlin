@@ -29,30 +29,19 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import com.google.gson.Gson
 import com.suda.yzune.wakeupschedule.R
-import com.suda.yzune.wakeupschedule.UpdateFragment
-import com.suda.yzune.wakeupschedule.apply_info.ApplyInfoActivity
 import com.suda.yzune.wakeupschedule.base_view.BaseActivity
 import com.suda.yzune.wakeupschedule.bean.TableBean
 import com.suda.yzune.wakeupschedule.bean.TableSelectBean
-import com.suda.yzune.wakeupschedule.bean.UpdateInfoBean
 import com.suda.yzune.wakeupschedule.course_add.AddCourseActivity
-import com.suda.yzune.wakeupschedule.intro.AboutActivity
-import com.suda.yzune.wakeupschedule.intro.IntroYoungActivity
+import com.suda.yzune.wakeupschedule.schedule_import.LoginWebActivity
 import com.suda.yzune.wakeupschedule.schedule_manage.ScheduleManageActivity
 import com.suda.yzune.wakeupschedule.schedule_settings.ScheduleSettingsActivity
 import com.suda.yzune.wakeupschedule.settings.SettingsActivity
-import com.suda.yzune.wakeupschedule.suda_life.SudaLifeActivity
 import com.suda.yzune.wakeupschedule.utils.*
-import com.suda.yzune.wakeupschedule.utils.UpdateUtils.getVersionCode
 import es.dmoral.toasty.Toasty
 import it.sephiroth.android.library.xtooltip.Tooltip
 import kotlinx.coroutines.delay
-import okhttp3.ResponseBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import splitties.activities.start
 import splitties.dimensions.dip
 import splitties.resources.styledDimenPxSize
@@ -81,18 +70,6 @@ class ScheduleActivity : BaseActivity() {
         ui = ScheduleActivityUI(this)
         setContentView(ui.root)
 
-        val json = getPrefer().getString(Const.KEY_OLD_VERSION_COURSE, "")
-        if (!json.isNullOrEmpty()) {
-            launch {
-                try {
-                    viewModel.updateFromOldVer(json)
-                    Toasty.success(applicationContext, "升级成功~").show()
-                } catch (e: Exception) {
-                    Toasty.error(applicationContext, "出现异常>_<\n${e.message}").show()
-                }
-            }
-        }
-
         bottomSheetBehavior = BottomSheetBehavior.from(ui.bottomSheet)
 
         ui.content.postDelayed({
@@ -109,37 +86,10 @@ class ScheduleActivity : BaseActivity() {
             getPrefer().edit {
                 putInt(Const.KEY_OPEN_TIMES, openTimes + 1)
             }
-        } else if (openTimes == 10) {
-            val dialog = DonateFragment.newInstance()
-            dialog.isCancelable = false
-            dialog.show(supportFragmentManager, "donateDialog")
-            getPrefer().edit {
-                putInt(Const.KEY_OPEN_TIMES, openTimes + 1)
-            }
         }
 
         if (!getPrefer().getBoolean(Const.KEY_HAS_COUNT, false)) {
             MyRetrofitUtils.instance.addCount(applicationContext)
-        }
-
-        if (getPrefer().getBoolean(Const.KEY_CHECK_UPDATE, true)) {
-            MyRetrofitUtils.instance.getService().getUpdateInfo().enqueue(object : Callback<ResponseBody> {
-                override fun onFailure(call: Call<ResponseBody>?, t: Throwable?) {}
-
-                override fun onResponse(call: Call<ResponseBody>?, response: Response<ResponseBody>?) {
-                    if (response!!.body() != null) {
-                        val gson = Gson()
-                        try {
-                            val updateInfo = gson.fromJson<UpdateInfoBean>(response.body()!!.string(), UpdateInfoBean::class.java)
-                            if (updateInfo.id > getVersionCode(this@ScheduleActivity.applicationContext)) {
-                                UpdateFragment.newInstance(updateInfo).show(supportFragmentManager, "updateDialog")
-                            }
-                        } catch (e: Exception) {
-
-                        }
-                    }
-                }
-            })
         }
 
         viewModel.initTableSelectList().observe(this, Observer {
@@ -333,9 +283,6 @@ class ScheduleActivity : BaseActivity() {
                 ))
             }
         }
-        ui.qaBtn.setOnClickListener {
-            Utils.openUrl(this, "https://support.qq.com/embed/97617/faqs-more")
-        }
     }
 
     private fun initIntro() {
@@ -359,10 +306,6 @@ class ScheduleActivity : BaseActivity() {
                 .text("点这里导入课表")
                 .anchor(ui.importBtn)
                 .create()
-        val shareTooltip = builder
-                .text("点这里导出、分享课表")
-                .anchor(ui.shareBtn)
-                .create()
         val moreTooltip = builder
                 .text("点这里查看更多设置")
                 .anchor(ui.moreBtn)
@@ -371,22 +314,17 @@ class ScheduleActivity : BaseActivity() {
             jumpTooltip.doOnHidden {
                 addBtnTooltip.doOnHidden {
                     importTooltip.doOnHidden {
-                        shareTooltip.doOnHidden {
-                            moreTooltip.doOnHidden {
-                                getPrefer().edit {
-                                    putBoolean(Const.KEY_HAS_INTRO, true)
-                                }
-                                showBottomSheetDialog()
-                            }.show(ui.content, Tooltip.Gravity.LEFT)
-                            moreTooltip.contentView?.findViewById<TextView>(R.id.btn_next)?.apply {
-                                text = "完成教程"
-                                setOnClickListener {
-                                    moreTooltip.hide()
-                                }
+                        moreTooltip.doOnHidden {
+                            getPrefer().edit {
+                                putBoolean(Const.KEY_HAS_INTRO, true)
                             }
+                            showBottomSheetDialog()
                         }.show(ui.content, Tooltip.Gravity.LEFT)
-                        shareTooltip.contentView?.findViewById<TextView>(R.id.btn_next)?.setOnClickListener {
-                            shareTooltip.hide()
+                        moreTooltip.contentView?.findViewById<TextView>(R.id.btn_next)?.apply {
+                            text = "完成教程"
+                            setOnClickListener {
+                                moreTooltip.hide()
+                            }
                         }
                     }.show(ui.content, Tooltip.Gravity.LEFT)
                     importTooltip.contentView?.findViewById<TextView>(R.id.btn_next)?.setOnClickListener {
@@ -412,7 +350,6 @@ class ScheduleActivity : BaseActivity() {
     }
 
     private fun initNavView() {
-        ui.navViewStart.menu.findItem(R.id.nav_suda).isVisible = getPrefer().getBoolean(Const.KEY_SHOW_SUDA_LIFE, true)
         ui.navViewStart.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.nav_setting -> {
@@ -422,10 +359,11 @@ class ScheduleActivity : BaseActivity() {
                     }, 360)
                     return@setNavigationItemSelectedListener true
                 }
-                R.id.nav_explore -> {
+                R.id.shellbox -> {
                     ui.drawerLayout.closeDrawer(GravityCompat.START)
                     ui.drawerLayout.postDelayed({
-                        start<ApplyInfoActivity>()
+                        Utils.openUrl(this, "https://shellbox.airmole.cn/")
+                        Toasty.info(this, "本APP同属贝壳小盒子团队开发维护~", Toasty.LENGTH_LONG).show()
                     }, 360)
                     return@setNavigationItemSelectedListener true
                 }
@@ -441,46 +379,6 @@ class ScheduleActivity : BaseActivity() {
                                     nodes = viewModel.table.nodes,
                                     type = viewModel.table.type
                             ))
-                        }
-                    }, 360)
-                    return@setNavigationItemSelectedListener true
-                }
-                R.id.nav_feedback -> {
-                    ui.drawerLayout.closeDrawer(GravityCompat.START)
-                    ui.drawerLayout.postDelayed({
-                        Utils.openUrl(this, "https://support.qq.com/product/97617")
-                        Toasty.info(this, "吐槽后隔天记得回来看看回复哦~", Toasty.LENGTH_LONG).show()
-                    }, 360)
-                    return@setNavigationItemSelectedListener true
-                }
-                R.id.nav_about -> {
-                    ui.drawerLayout.closeDrawer(GravityCompat.START)
-                    ui.drawerLayout.postDelayed({
-                        start<AboutActivity>()
-                    }, 360)
-                    return@setNavigationItemSelectedListener true
-                }
-                R.id.nav_young -> {
-                    ui.drawerLayout.closeDrawer(GravityCompat.START)
-                    ui.drawerLayout.postDelayed({
-                        start<IntroYoungActivity>()
-                    }, 360)
-                    return@setNavigationItemSelectedListener true
-                }
-                R.id.nav_empty_room -> {
-                    ui.drawerLayout.closeDrawer(GravityCompat.START)
-                    ui.drawerLayout.postDelayed({
-                        start<SudaLifeActivity> {
-                            putExtra("type", "空教室")
-                        }
-                    }, 360)
-                    return@setNavigationItemSelectedListener true
-                }
-                R.id.nav_bathroom -> {
-                    ui.drawerLayout.closeDrawer(GravityCompat.START)
-                    ui.drawerLayout.postDelayed({
-                        start<SudaLifeActivity> {
-                            putExtra("type", "澡堂")
                         }
                     }, 360)
                     return@setNavigationItemSelectedListener true
@@ -529,6 +427,7 @@ class ScheduleActivity : BaseActivity() {
 
         ui.weekToggleGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
             if (isChecked) {
+                Toasty.info(this@ScheduleActivity, checkedId).show()
                 ui.viewPager.currentItem = checkedId - 1
             }
         }
@@ -536,11 +435,15 @@ class ScheduleActivity : BaseActivity() {
         ui.navBtn.setOnClickListener { ui.drawerLayout.openDrawer(GravityCompat.START) }
 
         ui.shareBtn.setOnClickListener {
-            ExportSettingsFragment().show(supportFragmentManager, null)
+            // ExportSettingsFragment().show(supportFragmentManager, null)
         }
 
         ui.importBtn.setOnClickListener {
-            ImportChooseFragment().show(supportFragmentManager, "importDialog")
+            startActivityForResult(
+                Intent(this@ScheduleActivity, LoginWebActivity::class.java).apply {
+                    putExtra("import_type", "html")
+                    putExtra("tableId", viewModel.table.id)
+                }, Const.REQUEST_CODE_IMPORT)
         }
 
         ui.weekDayView.setOnClickListener {

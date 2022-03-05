@@ -22,6 +22,7 @@ import com.suda.yzune.wakeupschedule.BuildConfig
 import com.suda.yzune.wakeupschedule.R
 import com.suda.yzune.wakeupschedule.apply_info.ApplyInfoActivity
 import com.suda.yzune.wakeupschedule.base_view.BaseFragment
+import com.suda.yzune.wakeupschedule.schedule_import.Common.TYPE_QZ
 import com.suda.yzune.wakeupschedule.utils.Const
 import com.suda.yzune.wakeupschedule.utils.Utils
 import com.suda.yzune.wakeupschedule.utils.ViewUtils
@@ -75,7 +76,7 @@ class WebViewLoginFragment : BaseFragment() {
             tips = "1. 在上方输入教务网址，部分学校需要连接校园网\n2. 登录后点击到个人课表或者相关的页面\n3. 点击右下角的按钮抓取源码，并上传到服务器"
         }
 
-        if (viewModel.school == "强智教务") {
+        if (viewModel.school == "强智教务" || viewModel.importType == TYPE_QZ) {
             cg_qz.visibility = View.VISIBLE
             chip_qz1.isChecked = true
         } else {
@@ -98,16 +99,6 @@ class WebViewLoginFragment : BaseFragment() {
         } else {
             cg_old_qz.visibility = View.GONE
         }
-
-        MaterialAlertDialogBuilder(activity)
-                .setTitle("注意事项")
-                .setMessage(tips)
-                .setPositiveButton("我知道啦", null)
-                .setNeutralButton("如何正确选择教务？") { _, _ ->
-                    Utils.openUrl(activity!!, "https://support.qq.com/embed/97617/faqs/59901")
-                }
-                .setCancelable(false)
-                .show()
 
         wv_course.settings.javaScriptEnabled = true
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

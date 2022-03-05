@@ -3,29 +3,38 @@ package com.suda.yzune.wakeupschedule.schedule_import
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import android.text.TextWatcher
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
-import com.google.android.material.chip.Chip
+import com.google.gson.Gson
 import com.suda.yzune.wakeupschedule.R
 import com.suda.yzune.wakeupschedule.base_view.BaseFragment
 import com.suda.yzune.wakeupschedule.schedule_import.Common.TYPE_QZ
-import com.suda.yzune.wakeupschedule.schedule_import.Common.TYPE_ZF
+import com.suda.yzune.wakeupschedule.schedule_import.bean.CourseHtmlApi
 import com.suda.yzune.wakeupschedule.utils.Const
-import com.suda.yzune.wakeupschedule.utils.Utils
 import com.suda.yzune.wakeupschedule.utils.ViewUtils
 import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.fragment_html_import.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import splitties.snackbar.longSnack
-import java.nio.charset.Charset
+import okhttp3.FormBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import java.util.concurrent.TimeUnit
 
 class HtmlImportFragment : BaseFragment() {
 
     private val viewModel by activityViewModels<ImportViewModel>()
+    private var httpClient: OkHttpClient = OkHttpClient.Builder()
+        .followRedirects(false)
+        .followSslRedirects(false)
+        .connectTimeout(10, TimeUnit.SECONDS)
+        .build()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -34,113 +43,73 @@ class HtmlImportFragment : BaseFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        pb_loading.visibility = View.INVISIBLE
         super.onViewCreated(view, savedInstanceState)
         ViewUtils.resizeStatusBar(context!!.applicationContext, v_status)
-
-        tv_way.setOnClickListener {
-            Utils.openUrl(activity!!, "https://www.jianshu.com/p/4cd071697fed")
-        }
-
-        tv_type.setOnClickListener {
-            startActivityForResult(Intent(activity, SchoolListActivity::class.java).apply {
-                putExtra("fromLocal", true)
-            }, Const.REQUEST_CODE_CHOOSE_SCHOOL)
-        }
-
-        cp_utf.isChecked = true
-
-        cp_utf.setOnClickListener {
-            cp_utf.isChecked = true
-            cp_gbk.isChecked = false
-        }
-
-        cp_gbk.setOnClickListener {
-            cp_gbk.isChecked = true
-            cp_utf.isChecked = false
-        }
-
-        var qzChipId = 0
-        cg_qz.setOnCheckedChangeListener { chipGroup, id ->
-            when (id) {
-                R.id.chip_qz1 -> {
-                    qzChipId = id
-                    viewModel.qzType = 0
-                }
-                R.id.chip_qz2 -> {
-                    qzChipId = id
-                    viewModel.qzType = 1
-                }
-                R.id.chip_qz3 -> {
-                    qzChipId = id
-                    viewModel.qzType = 2
-                }
-                R.id.chip_qz4 -> {
-                    qzChipId = id
-                    viewModel.qzType = 3
-                }
-                else -> {
-                    chipGroup.findViewById<Chip>(qzChipId).isChecked = true
-                }
-            }
-        }
-
-        var zfChipId = 0
-        cg_zf.setOnCheckedChangeListener { chipGroup, id ->
-            when (id) {
-                R.id.chip_zf1 -> {
-                    zfChipId = id
-                    viewModel.zfType = 0
-                }
-                R.id.chip_zf2 -> {
-                    zfChipId = id
-                    viewModel.zfType = 1
-                }
-                else -> {
-                    chipGroup.findViewById<Chip>(zfChipId).isChecked = true
-                }
-            }
-        }
-
-        tv_self.setOnClickListener {
-            if (viewModel.importType.equals("html")) {
-                getView()?.longSnack("请先点击第二个按钮选择类型哦")
-            } else {
-                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-                    addCategory(Intent.CATEGORY_OPENABLE)
-                    type = "text/*"
-                }
-                try {
-                    startActivityForResult(intent, Const.REQUEST_CODE_IMPORT_HTML)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-        }
 
         ib_back.setOnClickListener {
             activity!!.finish()
         }
 
-        fab_import.setOnClickListener {
-            if (viewModel.htmlUri == null) {
-                it.longSnack("还没有选择文件呢>_<")
-                return@setOnClickListener
+        login_uid.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                viewModel.uid = s.toString()
             }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        login_pwd.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                viewModel.pwd = s.toString()
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        fab_import.setOnClickListener {
+            viewModel.importType = TYPE_QZ
+            val uid = viewModel.uid.toString()
+            val pwd = viewModel.pwd.toString()
+            pb_loading.visibility = View.VISIBLE
             launch {
                 try {
-                    val html = withContext(Dispatchers.IO) {
-                        activity!!.contentResolver.openInputStream(viewModel.htmlUri!!)!!.bufferedReader(
-                                if (cp_utf.isChecked) Charsets.UTF_8 else Charset.forName("gbk")
-                        ).readText()
+                    val formBody = FormBody.Builder()
+                        .add("uid", uid)
+                        .add("pwd", pwd)
+                        .build()
+
+                    val request = Request.Builder()
+                        .url(viewModel.apiUrl)
+                        .post(formBody)
+                        .build()
+                    val response = withContext(Dispatchers.IO) {
+                        httpClient.newCall(request).execute()
                     }
-                    val result = viewModel.importSchedule(html)
-                    Toasty.success(activity!!,
-                            "成功导入 $result 门课程(ﾟ▽ﾟ)/\n请在右侧栏切换后查看").show()
-                    activity!!.setResult(RESULT_OK)
-                    activity!!.finish()
+                    if (response.isSuccessful) {
+                        pb_loading.visibility = View.INVISIBLE
+                        val result = withContext(Dispatchers.IO) { response.body()?.string() }
+                        if (result != null) {
+                            val gson = Gson()
+                            val info = gson.fromJson(result,CourseHtmlApi::class.java)
+                            if (info.code == 200) {
+                                val result = viewModel.importSchedule(info.html)
+                                Toasty.success(activity!!, "成功导入 $result 门课程(ﾟ▽ﾟ)/\n请在右侧栏切换后查看").show()
+                                activity!!.setResult(RESULT_OK)
+                                activity!!.finish()
+                            } else {
+                                throw Exception("error")
+                            }
+                        } else {
+                            throw Exception("error")
+                        }
+                    } else {
+                        throw Exception("error")
+                    }
+
                 } catch (e: Exception) {
                     Toasty.error(activity!!,
-                            "导入失败>_<\n${e.message}", Toast.LENGTH_LONG).show()
+                        "导入失败>_<\n${e.message}", Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -152,22 +121,6 @@ class HtmlImportFragment : BaseFragment() {
         }
         if (requestCode == Const.REQUEST_CODE_CHOOSE_SCHOOL && resultCode == RESULT_OK) {
             viewModel.importType = data!!.getStringExtra("type")
-            when (viewModel.importType) {
-                TYPE_ZF -> {
-                    chip_zf1.isChecked = true
-                    cg_qz.visibility = View.GONE
-                    cg_zf.visibility = View.VISIBLE
-                }
-                TYPE_QZ -> {
-                    chip_qz1.isChecked = true
-                    cg_qz.visibility = View.VISIBLE
-                    cg_zf.visibility = View.GONE
-                }
-                else -> {
-                    cg_qz.visibility = View.GONE
-                    cg_zf.visibility = View.GONE
-                }
-            }
         }
     }
 

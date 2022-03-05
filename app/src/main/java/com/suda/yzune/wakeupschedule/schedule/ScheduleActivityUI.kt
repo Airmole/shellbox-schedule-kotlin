@@ -103,7 +103,7 @@ class ScheduleActivityUI(override val ctx: Context) : Ui {
 
     val shareBtn = AppCompatTextView(ctx).apply {
         id = R.id.anko_ib_share
-        text = "\uE6BA"
+        text = ""
         setBackgroundResource(outValue.resourceId)
         textSize = 20f
         gravity = Gravity.CENTER
@@ -295,14 +295,6 @@ class ScheduleActivityUI(override val ctx: Context) : Ui {
         textSize = 12f
     }
 
-    val qaBtn = createTextButton().apply {
-        id = R.id.bottom_sheet_question_btn
-        text = "常见问题"
-        minWidth = 0
-        minimumWidth = 0
-        textSize = 12f
-    }
-
     val cardContent = ConstraintLayout(ctx).apply {
         val space = dip(16)
         setPadding(space, 0, space, 0)
@@ -375,10 +367,6 @@ class ScheduleActivityUI(override val ctx: Context) : Ui {
             startToEnd = R.id.bottom_sheet_bg_btn
             topToBottom = R.id.bottom_sheet_title_shortcut
             endToStart = R.id.bottom_sheet_question_btn
-        })
-        addView(qaBtn, ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT).apply {
-            startToEnd = R.id.bottom_sheet_check_course_btn
-            topToBottom = R.id.bottom_sheet_title_shortcut
         })
     }
 

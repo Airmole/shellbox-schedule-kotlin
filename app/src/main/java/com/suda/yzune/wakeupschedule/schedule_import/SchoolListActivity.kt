@@ -431,14 +431,6 @@ class SchoolListActivity : BaseTitleActivity(), OnQuickSideBarTouchListener {
             add(SchoolInfo("Z", "郑州航空工业管理学院", "http://202.196.166.138/", TYPE_ZF))
         }
 
-//        schools.sortWith(compareBy({ it.sortKey }, { it.name }))
-//
-//        schools.add(0, SchoolInfo("★", "URP 系统"))
-//        schools.add(0, SchoolInfo("★", "旧强智（需要 IE 的那种）"))
-//        schools.add(0, SchoolInfo("★", "强智教务"))
-//        schools.add(0, SchoolInfo("★", "新正方教务"))
-//        schools.add(0, SchoolInfo("★", "正方教务"))
-
         val layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         recyclerView.layoutManager = layoutManager
 
