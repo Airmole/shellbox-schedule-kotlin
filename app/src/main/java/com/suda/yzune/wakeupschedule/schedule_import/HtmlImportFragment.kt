@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import android.text.TextWatcher
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import com.google.gson.Gson
 import com.suda.yzune.wakeupschedule.R
@@ -72,6 +71,12 @@ class HtmlImportFragment : BaseFragment() {
             val uid = viewModel.uid.toString()
             val pwd = viewModel.pwd.toString()
             pb_loading.visibility = View.VISIBLE
+            if (login_uid.text.isNullOrEmpty() || login_pwd.text.isNullOrEmpty()) {
+                Toasty.error(activity!!,
+                    "请先输入账号密码", Toast.LENGTH_LONG).show()
+                pb_loading.visibility = View.INVISIBLE
+                return@setOnClickListener
+            }
             launch {
                 try {
                     val formBody = FormBody.Builder()
@@ -106,8 +111,8 @@ class HtmlImportFragment : BaseFragment() {
                     } else {
                         throw Exception("error")
                     }
-
                 } catch (e: Exception) {
+                    pb_loading.visibility = View.INVISIBLE
                     Toasty.error(activity!!,
                         "导入失败>_<\n${e.message}", Toast.LENGTH_LONG).show()
                 }

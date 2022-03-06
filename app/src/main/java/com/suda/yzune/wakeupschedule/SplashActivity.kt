@@ -15,7 +15,6 @@ class SplashActivity : AppCompatActivity() {
         lifecycleScope.launch {
             UpdateUtils.tranOldData(applicationContext)
             start<ScheduleActivity>()
-            //startActivity<SudaLifeActivity>("type" to "澡堂")
             finish()
         }
     }

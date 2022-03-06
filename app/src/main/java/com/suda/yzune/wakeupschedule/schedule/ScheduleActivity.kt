@@ -112,40 +112,40 @@ class ScheduleActivity : BaseActivity() {
             val x = (ViewUtils.getRealSize(this).x * 0.5).toInt()
             val y = (ViewUtils.getRealSize(this).y * 0.5).toInt()
             Glide.with(this)
-                    .load(viewModel.table.background)
-                    .override(x, y)
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .listener(object : RequestListener<Drawable> {
-                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                            Toasty.error(this@ScheduleActivity, "无法检索背景图片，可能是它为某个应用私有所致，可以尝试在文件管理器中将它移动到其他位置，或是选择其它图片", Toasty.LENGTH_LONG).show()
-                            return false
-                        }
+                .load(viewModel.table.background)
+                .override(x, y)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                        Toasty.error(this@ScheduleActivity, "无法检索背景图片，可能是它为某个应用私有所致，可以尝试在文件管理器中将它移动到其他位置，或是选择其它图片", Toasty.LENGTH_LONG).show()
+                        return false
+                    }
 
-                        override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                            return false
-                        }
-                    })
-                    .error(R.drawable.main_background_2020_1)
-                    .into(ui.bg)
+                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                        return false
+                    }
+                })
+                .error(R.drawable.main_background_2020_1)
+                .into(ui.bg)
             Glide.with(this)
-                    .load(viewModel.table.background)
-                    .override((x * 0.8).toInt(), (y * 0.8).toInt())
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .error(R.drawable.main_background_2020_1)
-                    .into(ui.navViewStart.getHeaderView(0).findViewById(R.id.iv_header))
+                .load(viewModel.table.background)
+                .override((x * 0.8).toInt(), (y * 0.8).toInt())
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .error(R.drawable.main_background_2020_1)
+                .into(ui.navViewStart.getHeaderView(0).findViewById(R.id.iv_header))
         } else {
             val x = (ViewUtils.getRealSize(this).x * 0.5).toInt()
             val y = (ViewUtils.getRealSize(this).y * 0.5).toInt()
             Glide.with(this)
-                    .load(R.drawable.main_background_2020_1)
-                    .override(x, y)
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .into(ui.bg)
+                .load(R.drawable.main_background_2020_1)
+                .override(x, y)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(ui.bg)
             Glide.with(this)
-                    .load(R.drawable.main_background_2020_1)
-                    .override((x * 0.8).toInt(), (y * 0.8).toInt())
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .into(ui.navViewStart.getHeaderView(0).findViewById(R.id.iv_header))
+                .load(R.drawable.main_background_2020_1)
+                .override((x * 0.8).toInt(), (y * 0.8).toInt())
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(ui.navViewStart.getHeaderView(0).findViewById(R.id.iv_header))
         }
 
         for (i in 0 until ui.content.childCount) {
@@ -177,7 +177,7 @@ class ScheduleActivity : BaseActivity() {
             when (view.id) {
                 R.id.menu_setting -> {
                     startActivityForResult(Intent(this,
-                            ScheduleSettingsActivity::class.java).apply {
+                        ScheduleSettingsActivity::class.java).apply {
                         putExtra("tableData", viewModel.table)
                     }, Const.REQUEST_CODE_SCHEDULE_SETTING)
                 }
@@ -220,11 +220,11 @@ class ScheduleActivity : BaseActivity() {
         })
         ui.createScheduleBtn.setOnClickListener {
             val dialog = MaterialAlertDialogBuilder(this)
-                    .setTitle(R.string.setting_schedule_name)
-                    .setView(R.layout.dialog_edit_text)
-                    .setNegativeButton(R.string.cancel, null)
-                    .setPositiveButton(R.string.sure, null)
-                    .create()
+                .setTitle(R.string.setting_schedule_name)
+                .setView(R.layout.dialog_edit_text)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.sure, null)
+                .create()
             dialog.show()
             val inputLayout = dialog.findViewById<TextInputLayout>(R.id.text_input_layout)
             val editText = dialog.findViewById<TextInputEditText>(R.id.edit_text)
@@ -248,25 +248,25 @@ class ScheduleActivity : BaseActivity() {
         }
         ui.manageScheduleBtn.setOnClickListener {
             startActivityForResult(
-                    Intent(this, ScheduleManageActivity::class.java), Const.REQUEST_CODE_SCHEDULE_SETTING)
+                Intent(this, ScheduleManageActivity::class.java), Const.REQUEST_CODE_SCHEDULE_SETTING)
         }
         ui.changeWeekBtn.setOnClickListener {
             startActivityForResult(Intent(this,
-                    ScheduleSettingsActivity::class.java).apply {
+                ScheduleSettingsActivity::class.java).apply {
                 putExtra("tableData", viewModel.table)
                 putExtra("settingItem", "当前周")
             }, Const.REQUEST_CODE_SCHEDULE_SETTING)
         }
         ui.timeBtn.setOnClickListener {
             startActivityForResult(Intent(this,
-                    ScheduleSettingsActivity::class.java).apply {
+                ScheduleSettingsActivity::class.java).apply {
                 putExtra("tableData", viewModel.table)
                 putExtra("settingItem", "上课时间")
             }, Const.REQUEST_CODE_SCHEDULE_SETTING)
         }
         ui.changeBgBtn.setOnClickListener {
             startActivityForResult(Intent(this,
-                    ScheduleSettingsActivity::class.java).apply {
+                ScheduleSettingsActivity::class.java).apply {
                 putExtra("tableData", viewModel.table)
                 putExtra("settingItem", "课程表背景")
             }, Const.REQUEST_CODE_SCHEDULE_SETTING)
@@ -274,12 +274,12 @@ class ScheduleActivity : BaseActivity() {
         ui.courseBtn.setOnClickListener {
             start<ScheduleManageActivity> {
                 putExtra("selectedTable", TableSelectBean(
-                        id = viewModel.table.id,
-                        background = viewModel.table.background,
-                        tableName = viewModel.table.tableName,
-                        maxWeek = viewModel.table.maxWeek,
-                        nodes = viewModel.table.nodes,
-                        type = viewModel.table.type
+                    id = viewModel.table.id,
+                    background = viewModel.table.background,
+                    tableName = viewModel.table.tableName,
+                    maxWeek = viewModel.table.maxWeek,
+                    nodes = viewModel.table.nodes,
+                    type = viewModel.table.type
                 ))
             }
         }
@@ -287,29 +287,29 @@ class ScheduleActivity : BaseActivity() {
 
     private fun initIntro() {
         val builder = Tooltip.Builder(this@ScheduleActivity)
-                .overlay(true)
-                .maxWidth(dip(240))
-                .customView(R.layout.my_tooltip, R.id.tv_tip)
+            .overlay(true)
+            .maxWidth(dip(240))
+            .customView(R.layout.my_tooltip, R.id.tv_tip)
         val navTooltip = builder
-                .text("点这里打开左栏")
-                .anchor(ui.navBtn)
-                .create()
+            .text("点这里打开左栏")
+            .anchor(ui.navBtn)
+            .create()
         val jumpTooltip = builder
-                .text("点这里快速回到当前周")
-                .anchor(ui.weekDayView)
-                .create()
+            .text("点这里快速回到当前周")
+            .anchor(ui.weekDayView)
+            .create()
         val addBtnTooltip = builder
-                .text("点这里手动添加课程")
-                .anchor(ui.addBtn)
-                .create()
+            .text("点这里手动添加课程")
+            .anchor(ui.addBtn)
+            .create()
         val importTooltip = builder
-                .text("点这里导入课表")
-                .anchor(ui.importBtn)
-                .create()
+            .text("点这里导入课表")
+            .anchor(ui.importBtn)
+            .create()
         val moreTooltip = builder
-                .text("点这里查看更多设置")
-                .anchor(ui.moreBtn)
-                .create()
+            .text("点这里查看更多设置")
+            .anchor(ui.moreBtn)
+            .create()
         navTooltip.doOnHidden {
             jumpTooltip.doOnHidden {
                 addBtnTooltip.doOnHidden {
@@ -372,12 +372,12 @@ class ScheduleActivity : BaseActivity() {
                     ui.drawerLayout.postDelayed({
                         start<ScheduleManageActivity> {
                             putExtra("selectedTable", TableSelectBean(
-                                    id = viewModel.table.id,
-                                    background = viewModel.table.background,
-                                    tableName = viewModel.table.tableName,
-                                    maxWeek = viewModel.table.maxWeek,
-                                    nodes = viewModel.table.nodes,
-                                    type = viewModel.table.type
+                                id = viewModel.table.id,
+                                background = viewModel.table.background,
+                                tableName = viewModel.table.tableName,
+                                maxWeek = viewModel.table.maxWeek,
+                                nodes = viewModel.table.nodes,
+                                type = viewModel.table.type
                             ))
                         }
                     }, 360)
@@ -425,12 +425,12 @@ class ScheduleActivity : BaseActivity() {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
 
-        ui.weekToggleGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
+        /*ui.weekToggleGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
             if (isChecked) {
                 Toasty.info(this@ScheduleActivity, checkedId).show()
                 ui.viewPager.currentItem = checkedId - 1
             }
-        }
+        }*/
 
         ui.navBtn.setOnClickListener { ui.drawerLayout.openDrawer(GravityCompat.START) }
 
@@ -504,16 +504,16 @@ class ScheduleActivity : BaseActivity() {
                 } else {
                     ui.weekView.text = "当前周已超出设定范围"
                     MaterialAlertDialogBuilder(this@ScheduleActivity)
-                            .setTitle("提示")
-                            .setMessage("发现当前周已超出设定的周数范围，是否去设置修改「当前周」或「开学日期」？")
-                            .setPositiveButton("打开设置") { _, _ ->
-                                startActivityForResult(Intent(this@ScheduleActivity,
-                                        ScheduleSettingsActivity::class.java).apply {
-                                    putExtra("tableData", viewModel.table)
-                                }, Const.REQUEST_CODE_SCHEDULE_SETTING)
-                            }
-                            .setNegativeButton(R.string.cancel, null)
-                            .show()
+                        .setTitle("提示")
+                        .setMessage("发现当前周已超出设定的周数范围，是否去设置修改「当前周」或「开学日期」？")
+                        .setPositiveButton("打开设置") { _, _ ->
+                            startActivityForResult(Intent(this@ScheduleActivity,
+                                ScheduleSettingsActivity::class.java).apply {
+                                putExtra("tableData", viewModel.table)
+                            }, Const.REQUEST_CODE_SCHEDULE_SETTING)
+                        }
+                        .setNegativeButton(R.string.cancel, null)
+                        .show()
                 }
             } else {
                 ui.weekView.text = "还没有开学哦"
@@ -579,16 +579,16 @@ class ScheduleActivity : BaseActivity() {
                 showBottomSheetDialog()
                 //ui.drawerLayout.openDrawer(Gravity.END)
                 MaterialAlertDialogBuilder(this)
-                        .setTitle("温馨提示")
-                        .setView(AppCompatTextView(this).apply {
-                            text = ViewUtils.getHtmlSpannedString("记得<b><font color='#fa6278'>仔细检查</font></b>有没有少课、课程信息对不对哦，不要到时候<b><font color='#fa6278'>一不小心就翘课</font></b>啦<br>解析算法不是100%可靠的哦<br>但会朝这个方向努力")
-                            layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-                            val space = styledDimenPxSize(R.attr.dialogPreferredPadding)
-                            setPadding(space, dip(8), space, 0)
-                        })
-                        .setCancelable(false)
-                        .setPositiveButton("我知道啦", null)
-                        .show()
+                    .setTitle("温馨提示")
+                    .setView(AppCompatTextView(this).apply {
+                        text = ViewUtils.getHtmlSpannedString("记得<b><font color='#fa6278'>仔细检查</font></b>有没有少课、课程信息对不对哦，不要到时候<b><font color='#fa6278'>一不小心就翘课</font></b>啦<br>解析算法不是100%可靠的哦<br>但会朝这个方向努力<br>然后再设置一下开学日期")
+                        layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                        val space = styledDimenPxSize(R.attr.dialogPreferredPadding)
+                        setPadding(space, dip(8), space, 0)
+                    })
+                    .setCancelable(false)
+                    .setPositiveButton("我知道啦", null)
+                    .show()
             }
             Const.REQUEST_CODE_EXPORT -> {
                 val uri = data?.data
@@ -618,20 +618,20 @@ class ScheduleActivity : BaseActivity() {
 
     private fun showShareDialog(title: String, uri: Uri) {
         MaterialAlertDialogBuilder(this)
-                .setTitle("分享")
-                .setMessage("成功导出至你指定的路径啦，是否还要分享出去呢？")
-                .setNegativeButton(R.string.cancel, null)
-                .setPositiveButton("分享") { _, _ ->
-                    val shareIntent = ShareCompat.IntentBuilder.from(this)
-                            .setChooserTitle(title)
-                            .setStream(uri)
-                            .setType("*/*")
-                            .createChooserIntent()
-                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(shareIntent)
-                }
-                .setCancelable(false)
-                .show()
+            .setTitle("分享")
+            .setMessage("成功导出至你指定的路径啦，是否还要分享出去呢？")
+            .setNegativeButton(R.string.cancel, null)
+            .setPositiveButton("分享") { _, _ ->
+                val shareIntent = ShareCompat.IntentBuilder.from(this)
+                    .setChooserTitle(title)
+                    .setStream(uri)
+                    .setType("*/*")
+                    .createChooserIntent()
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(shareIntent)
+            }
+            .setCancelable(false)
+            .show()
     }
 
     override fun onBackPressed() {

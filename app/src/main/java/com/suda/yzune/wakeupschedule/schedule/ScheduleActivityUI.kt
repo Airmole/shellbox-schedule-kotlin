@@ -125,8 +125,8 @@ class ScheduleActivityUI(override val ctx: Context) : Ui {
         id = R.id.anko_cl_schedule
         context.theme.resolveAttribute(R.attr.selectableItemBackgroundBorderless, outValue, true)
         addView(bg, ConstraintLayout.LayoutParams(
-                ConstraintLayout.LayoutParams.MATCH_CONSTRAINT,
-                ConstraintLayout.LayoutParams.MATCH_CONSTRAINT).apply {
+            ConstraintLayout.LayoutParams.MATCH_CONSTRAINT,
+            ConstraintLayout.LayoutParams.MATCH_CONSTRAINT).apply {
             startToStart = PARENT_ID
             endToEnd = PARENT_ID
             topToTop = PARENT_ID
@@ -134,8 +134,8 @@ class ScheduleActivityUI(override val ctx: Context) : Ui {
         })
 
         addView(dateView, ConstraintLayout.LayoutParams(
-                ConstraintLayout.LayoutParams.WRAP_CONTENT,
-                ConstraintLayout.LayoutParams.WRAP_CONTENT).apply {
+            ConstraintLayout.LayoutParams.WRAP_CONTENT,
+            ConstraintLayout.LayoutParams.WRAP_CONTENT).apply {
             startToStart = PARENT_ID
             topToTop = PARENT_ID
             bottomToBottom = R.id.anko_ib_nav
@@ -144,16 +144,16 @@ class ScheduleActivityUI(override val ctx: Context) : Ui {
         })
 
         addView(weekView, ConstraintLayout.LayoutParams(
-                ConstraintLayout.LayoutParams.WRAP_CONTENT,
-                ConstraintLayout.LayoutParams.WRAP_CONTENT).apply {
+            ConstraintLayout.LayoutParams.WRAP_CONTENT,
+            ConstraintLayout.LayoutParams.WRAP_CONTENT).apply {
             startToStart = R.id.anko_tv_date
             topToBottom = R.id.anko_tv_date
             topMargin = dip(4)
         })
 
         addView(weekDayView, ConstraintLayout.LayoutParams(
-                ConstraintLayout.LayoutParams.WRAP_CONTENT,
-                ConstraintLayout.LayoutParams.WRAP_CONTENT).apply {
+            ConstraintLayout.LayoutParams.WRAP_CONTENT,
+            ConstraintLayout.LayoutParams.WRAP_CONTENT).apply {
             startToEnd = R.id.anko_tv_week
             topToBottom = R.id.anko_tv_date
             topMargin = dip(4)
@@ -196,8 +196,8 @@ class ScheduleActivityUI(override val ctx: Context) : Ui {
         })
 
         addView(viewPager, ConstraintLayout.LayoutParams(
-                ConstraintLayout.LayoutParams.MATCH_CONSTRAINT,
-                ConstraintLayout.LayoutParams.MATCH_CONSTRAINT).apply {
+            ConstraintLayout.LayoutParams.MATCH_CONSTRAINT,
+            ConstraintLayout.LayoutParams.MATCH_CONSTRAINT).apply {
             topToBottom = R.id.anko_tv_week
             bottomToBottom = PARENT_ID
             startToStart = PARENT_ID
@@ -226,10 +226,10 @@ class ScheduleActivityUI(override val ctx: Context) : Ui {
     val drawerLayout = DrawerLayout(ctx).apply {
         id = R.id.anko_drawer_layout
         addView(content, DrawerLayout.LayoutParams(DrawerLayout.LayoutParams.MATCH_PARENT,
-                DrawerLayout.LayoutParams.MATCH_PARENT))
+            DrawerLayout.LayoutParams.MATCH_PARENT))
 
         addView(navViewStart, DrawerLayout.LayoutParams(DrawerLayout.LayoutParams.MATCH_PARENT,
-                DrawerLayout.LayoutParams.MATCH_PARENT).apply {
+            DrawerLayout.LayoutParams.MATCH_PARENT).apply {
             gravity = Gravity.START
         })
     }
@@ -387,13 +387,13 @@ class ScheduleActivityUI(override val ctx: Context) : Ui {
     override val root = CoordinatorLayout(ctx).apply {
 
         addView(drawerLayout, CoordinatorLayout.LayoutParams(
-                CoordinatorLayout.LayoutParams.MATCH_PARENT,
-                CoordinatorLayout.LayoutParams.MATCH_PARENT)
+            CoordinatorLayout.LayoutParams.MATCH_PARENT,
+            CoordinatorLayout.LayoutParams.MATCH_PARENT)
         )
 
         addView(bottomSheet, CoordinatorLayout.LayoutParams(
-                CoordinatorLayout.LayoutParams.MATCH_PARENT,
-                ViewUtils.getScreenInfo(context)[1]).apply {
+            CoordinatorLayout.LayoutParams.MATCH_PARENT,
+            ViewUtils.getScreenInfo(context)[1]).apply {
             behavior = BottomSheetBehavior<FrameLayout>(ctx, null).apply {
                 isHideable = true
                 peekHeight = 0
