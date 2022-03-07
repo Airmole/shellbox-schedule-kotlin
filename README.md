@@ -4,6 +4,7 @@
 
 - [下载](https://github.com/Airmole/shellbox-schedule-kotlin/releases/tag/v1.0.1#:~:text=shellbox_schedule_1_0_1.apk)
 
+- [gitee下载](https://gitee.com/airmole/shellbox-schedule-kotlin/attach_files/987384/download/shellbox_schedule_1_0_1.apk)
 
 - [蓝奏云下载](https://wwp.lanzouq.com/b02ovxzgh) 密码:222m
 
